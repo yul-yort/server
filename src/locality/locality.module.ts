@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { LocalityController } from './locality.controller';
 
-@Module({})
+@Module({
+  controllers: [LocalityController]
+})
 export class LocalityModule {}
