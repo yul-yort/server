@@ -1,11 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { CreateLocalityDto } from './dto/create-locality.dto';
+import { Locality_NOT_FOUND } from './locality.constants';
 import { LocalityModel } from './locality.model';
+import { LocalityService } from './locality.service';
 
 @Controller('locality')
 export class LocalityController {
-  @Post('create') 
-  async create(@Body() dto: Omit<LocalityModel, '_id'>) {
 
+  constructor(private readonly localityService: LocalityService) {
+    // console.log(ConfigService)
+  }
+
+  @Post('create') 
+  async create(@Body() dto: CreateLocalityDto) {
+    return this.localityService.create(dto)
   }
 
   @Get()
@@ -15,7 +24,10 @@ export class LocalityController {
 
   @Delete(':id')
   async delete(@Param('id') id:string) {
-
+    const deleteDoc = await this.localityService.delete(id)
+    if(!deleteDoc) {
+      throw new HttpException(Locality_NOT_FOUND, HttpStatus.NOT_FOUND)
+    }
   }
 
   @Patch(':id')
