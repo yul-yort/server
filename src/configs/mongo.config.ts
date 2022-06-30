@@ -20,6 +20,4 @@ const getMongoString = (configService: ConfigService) => {
   return `mongodb://${login}:${password}@${host}:${port}/${authDataBase}`
 }
 
-const getMongoOptions = () => ({
-  useNewUrlParser: true,
-})
+const getMongoOptions = () => ({})
