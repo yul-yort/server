@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CreateLocalityDto } from './dto/create-locality.dto';
 import { Locality_NOT_FOUND } from './locality.constants';
 import { LocalityModel } from './locality.model';
@@ -33,5 +34,13 @@ export class LocalityController {
   @Patch(':id')
   async patch(@Param('id') id:string, @Body() dto: LocalityModel) {
 
+  }
+
+  //TODO: test
+  @UseGuards(JwtAuthGuard)
+  @Get('test')
+  async test() {
+    console.log('test')
+    return '11234'
   }
 }
