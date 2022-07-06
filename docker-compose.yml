@@ -1,7 +1,7 @@
-version: '20'
+version: '3.8'
 services:
-  mongo:
-    image: mongo:4.4.4
+  mongodb:
+    image: mongo:latest
     container_name: mongo
     restart: always
     environment:
@@ -10,4 +10,15 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./mongo-data-4.4:/data/db
+      - ./data-mongo:/data/db
+  backend:
+    build: .
+    # image: top-api:latest
+    container_name: top-api
+    restart: always
+    depends_on:
+      - mongodb
+    ports:
+      - 9000:9000
+    volumes:
+      - ./.env:/opt/app/.env
