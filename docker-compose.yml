@@ -21,4 +21,5 @@ services:
     ports:
       - 9000:9000
     volumes:
+      - ./src:/opt/app
       - ./.env:/opt/app/.env

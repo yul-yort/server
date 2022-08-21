@@ -4,6 +4,7 @@ import {
   Controller,
   HttpCode,
   Post,
+  Req,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -31,8 +32,14 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('login')
-  async login(@Body() { login, password }: AuthDto) {
+  //Запрашивать через Req
+  async login(@Body() { login, password }: AuthDto, @Req() response) {
+    
+    
     const { email } = await this.authService.validateUser(login, password);
+    // ОШИБКА
+    response.cookie('key', 'value')
     return this.authService.login(email)
+    
   }
 }
