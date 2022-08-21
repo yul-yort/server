@@ -34,12 +34,10 @@ export class AuthController {
   @Post('login')
   //Запрашивать через Req
   async login(@Body() { login, password }: AuthDto, @Req() response) {
-    
-    
+    console.log('ОШИБКА');
     const { email } = await this.authService.validateUser(login, password);
     // ОШИБКА
-    response.cookie('key', 'value')
-    return this.authService.login(email)
-    
+    response.cookie('key', 'value');
+    return this.authService.login(email);
   }
 }

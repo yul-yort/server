@@ -18,7 +18,8 @@ const getMongoString = (configService: ConfigService) => {
   const authDataBase = configService.get('MONGO_AUTHDATABASE')
   // TODO: host - 127.0.0.1
   
-  return `mongodb://${login}:${password}@${host}:${port}/${authDataBase}`
+  // return `mongodb://${login}:${password}@${host}:${port}/${authDataBase}`
+  return `mongodb://${login}:${password}@localhost:${port}/${authDataBase}`
 }
 
 const getMongoOptions = () => ({})
