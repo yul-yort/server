@@ -34,11 +34,13 @@ export class AuthController {
   @Post('login')
   //Запрашивать через Req
   async login(@Body() { login, password }: AuthDto, @Res({ passthrough: true }) response) {
-    console.log(response.body);
-    console.log(login)
     const { email } = await this.authService.validateUser(login, password);
 
     const token = await this.authService.login(email)
-    response.cookie('token', `${token.access_token}`);
+   
+    response.cookie('access_token', `${token.access_token}`);
+
+    //TODO: нужно возвращать JSON (можно ли будет не возвращать)
+    return token
   }
 }
