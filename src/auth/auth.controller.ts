@@ -4,6 +4,7 @@ import {
   Controller,
   HttpCode,
   Post,
+  Res,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -31,8 +32,14 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('login')
-  async login(@Body() { login, password }: AuthDto) {
+  async login(@Body() { login, password }: AuthDto, @Res({ passthrough: true }) response) {
     const { email } = await this.authService.validateUser(login, password);
-    return this.authService.login(email)
+
+    const token = await this.authService.login(email)
+   
+    response.cookie('access_token', `${token.access_token}`);
+
+    //TODO: нужно возвращать JSON (можно ли будет не возвращать)
+    return token
   }
 }

@@ -8,8 +8,9 @@ RUN npm install --legacy-peer-deps
 
 ADD . .
 
-RUN npm run build 
+# RUN npm run build 
+# CMD ["node", "./dist/main.js"]
 
 # RUN npm --prune --production
 
-CMD ["node", "./dist/main.js"]
+CMD ["npm", "start"]
