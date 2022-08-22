@@ -32,7 +32,6 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('login')
-  //Запрашивать через Req
   async login(@Body() { login, password }: AuthDto, @Res({ passthrough: true }) response) {
     const { email } = await this.authService.validateUser(login, password);
 
