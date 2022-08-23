@@ -16,7 +16,7 @@ export class AgencyService {
   }
 
   async getAgency(id: string): Promise<DocumentType<AgencyModel>> {
-    return this.agencyModel.findById(id);
+    return await this.agencyModel.findById(id).exec();
   }
 
   async createAgency(dto: AgencyCreateDto): Promise<DocumentType<AgencyModel>> {
@@ -24,15 +24,17 @@ export class AgencyService {
   }
 
   async deleteAgency(id: string): Promise<DocumentType<AgencyModel>> {
-    return this.agencyModel.findByIdAndDelete(id);
+    return this.agencyModel.findByIdAndDelete(id).exec();
   }
 
   async updateAgency({
     id,
     ...dto
   }: AgencyUpdateDto): Promise<DocumentType<AgencyModel>> {
-    return this.agencyModel.findByIdAndUpdate(id, dto, {
-      returnDocument: 'after',
-    });
+    return this.agencyModel
+      .findByIdAndUpdate(id, dto, {
+        returnDocument: 'after',
+      })
+      .exec();
   }
 }
