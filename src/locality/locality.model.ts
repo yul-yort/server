@@ -8,8 +8,14 @@ export class LocalityModel extends TimeStamps {
   name: string;
 
   @prop()
-  description: string;
+  district?: string;
+
+  @prop()
+  region?: string;
+
+  @prop()
+  description?: string;
 
   @prop({type: () => [String]})
-  categories: string[];
+  coordinates?: string[];
 }

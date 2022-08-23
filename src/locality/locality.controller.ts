@@ -11,12 +11,7 @@ import { LocalityService } from './locality.service';
 export class LocalityController {
 
   constructor(private readonly localityService: LocalityService) {
-    // console.log(ConfigService)
-  }
-
-  @Post('create') 
-  async create(@Body() dto: CreateLocalityDto) {
-    return this.localityService.create(dto)
+    console.log(ConfigService)
   }
 
   @Get()
@@ -32,16 +27,21 @@ export class LocalityController {
     }
   }
 
-  @Patch(':id')
-  async patch(@Param('id') id:string, @Body() dto: LocalityModel) {
 
+  // @UseGuards(JwtAuthGuard)
+  @Get('list')
+  async getList(@UserEmail() email: string) {
+    const localities = await this.localityService.getList()
+
+    return localities
   }
 
-  //TODO: locality
-  @UseGuards(JwtAuthGuard)
-  @Get('locality')
-  async test(@UserEmail() email: string) {
-    console.log('test', email)
-    return '11234'
+  // @UseGuards(JwtAuthGuard)
+  @Post('create')
+  async createLocality(@Body() dto: CreateLocalityDto) {
+    
+    const a =  await this.localityService.create(dto)
+    console.log(a)
+    return []
   }
 }

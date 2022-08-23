@@ -12,8 +12,25 @@ export class LocalityService {
     private readonly localityModel: ModelType<LocalityModel>,
   ) {}
 
-  async create(dto: CreateLocalityDto): Promise<DocumentType<LocalityModel>> {
-    return this.localityModel.create(dto);
+  // async create(dto: CreateLocalityDto): Promise<DocumentType<LocalityModel>> {
+  //   return this.localityModel.create(dto);
+  // }
+
+  async create(dto: CreateLocalityDto) {
+    const {name, description, region, district} = dto
+    const newLocality = new this.localityModel({
+      name,
+      description,
+      region,
+      district
+    });
+
+    return newLocality.save();
+  }
+
+  async getList() {
+    return this.localityModel.find();
+   
   }
 
   async delete(id: string): Promise<DocumentType<LocalityModel> | null> {
