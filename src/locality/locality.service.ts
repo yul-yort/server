@@ -17,20 +17,23 @@ export class LocalityService {
   // }
 
   async create(dto: CreateLocalityDto) {
-    const {name, description, region, district} = dto
+    const { name, description, region, district } = dto;
+    const localities = await this.localityModel.find();
     const newLocality = new this.localityModel({
       name,
       description,
       region,
-      district
+      district,
     });
 
-    return newLocality.save();
+    const locality = await newLocality.save();
+    const updatedLocalities = [...localities, locality]
+
+    return updatedLocalities
   }
 
   async getList() {
     return this.localityModel.find();
-   
   }
 
   async delete(id: string): Promise<DocumentType<LocalityModel> | null> {
