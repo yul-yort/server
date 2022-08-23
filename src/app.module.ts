@@ -6,17 +6,19 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { getMongoConfig } from './configs/mongo.config';
 import { LocalityModule } from './locality/locality.module';
+import { AgencyModule } from './agency/agency.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    TypegooseModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: getMongoConfig,
-    }),
-    AuthModule,
-    LocalityModule,
+	ConfigModule.forRoot(),
+	TypegooseModule.forRootAsync({
+		imports: [ConfigModule],
+		inject: [ConfigService],
+		useFactory: getMongoConfig,
+	}),
+	AuthModule,
+	LocalityModule,
+	AgencyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
