@@ -5,51 +5,47 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  Param,
-  Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
-import { UserEmail } from 'src/decorators/user-email.decarator';
-import { CreateLocalityDto } from './dto/create-locality.dto';
+import { DocumentType } from '@typegoose/typegoose';
+import {
+  LocalityCreateDto,
+} from './dto/create-dto';
+import { LocalityUpdateDto } from './dto/update-dto';
 import { Locality_NOT_FOUND } from './locality.constants';
 import { LocalityModel } from './locality.model';
 import { LocalityService } from './locality.service';
 
 @Controller('locality')
 export class LocalityController {
-  constructor(private readonly localityService: LocalityService) {
-    console.log(ConfigService);
-  }
+  constructor(private readonly localityService: LocalityService) {}
 
-  @Get()
-  async get(@Param('id') id: string) {}
-
+  //@UseGuards(JwtAuthGuard)
   @Delete('delete')
-  async delete(@Query('id') id: string) {
-    
+  async delete(@Query('id') id: string): Promise<DocumentType<LocalityModel>> {
     const deleteDoc = await this.localityService.delete(id);
     if (!deleteDoc) {
       throw new HttpException(Locality_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
-    return deleteDoc
+    return deleteDoc;
   }
 
-  // @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('list')
-  async getList(@UserEmail() email: string) {
+  async getList(): Promise<DocumentType<LocalityModel>[]> {
     const localities = await this.localityService.getList();
-
     return localities;
   }
 
-  // @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Post('create')
-  async createLocality(@Body() dto: CreateLocalityDto) {
-    //TODO: пустой массив 
+  async createLocality(@Body() dto: LocalityCreateDto): Promise<DocumentType<LocalityModel>> {
     return this.localityService.create(dto);
+  }
+
+  @Post('edit')
+  async editLocality(@Body() dto: LocalityUpdateDto): Promise<DocumentType<LocalityModel>> {
+    return this.localityService.editLocality(dto);
   }
 }
