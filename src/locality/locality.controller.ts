@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -28,14 +29,13 @@ export class LocalityController {
   async get(@Param('id') id: string) {}
 
   @Delete('delete')
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    console.log('test', id)
-    // const deleteDoc = await this.localityService.delete(id);
-    // if (!deleteDoc) {
-    //   throw new HttpException(Locality_NOT_FOUND, HttpStatus.NOT_FOUND);
-    // }
-    return []
+  async delete(@Query('id') id: string) {
+    
+    const deleteDoc = await this.localityService.delete(id);
+    if (!deleteDoc) {
+      throw new HttpException(Locality_NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+    return deleteDoc
   }
 
   // @UseGuards(JwtAuthGuard)
