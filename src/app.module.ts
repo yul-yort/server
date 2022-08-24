@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { getMongoConfig } from './configs/mongo.config';
 import { LocalityModule } from './locality/locality.module';
 import { AgencyModule } from './agency/agency.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AgencyModule } from './agency/agency.module';
 	AuthModule,
 	LocalityModule,
 	AgencyModule,
+  OrderModule
   ],
   controllers: [AppController],
   providers: [AppService],
