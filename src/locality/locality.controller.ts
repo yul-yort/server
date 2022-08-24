@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   HttpException,
   HttpStatus,
   Post,
@@ -23,6 +24,7 @@ export class LocalityController {
 
   //@UseGuards(JwtAuthGuard)
   @Delete('delete')
+  @HttpCode(200)
   async delete(@Query('id') id: string): Promise<DocumentType<LocalityModel>> {
     const deleteDoc = await this.localityService.delete(id);
     if (!deleteDoc) {
@@ -33,6 +35,7 @@ export class LocalityController {
 
   //@UseGuards(JwtAuthGuard)
   @Get('list')
+  @HttpCode(200)
   async getList(): Promise<DocumentType<LocalityModel>[]> {
     const localities = await this.localityService.getList();
     return localities;
@@ -40,11 +43,13 @@ export class LocalityController {
 
   //@UseGuards(JwtAuthGuard)
   @Post('create')
+  @HttpCode(201)
   async createLocality(@Body() dto: LocalityCreateDto): Promise<DocumentType<LocalityModel>> {
     return this.localityService.create(dto);
   }
 
   @Post('edit')
+  @HttpCode(200)
   async editLocality(@Body() dto: LocalityUpdateDto): Promise<DocumentType<LocalityModel>> {
     return this.localityService.editLocality(dto);
   }
