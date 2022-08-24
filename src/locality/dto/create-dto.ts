@@ -21,5 +21,6 @@ export class LocalityCreateDto {
   @IsOptional()
   district?: string;
 
+  //TODO: как указать массив
   coordinates?: [TLocalityLatitude, TLocalityLongitude]
 }

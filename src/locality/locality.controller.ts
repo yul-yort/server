@@ -24,7 +24,6 @@ export class LocalityController {
 
   //@UseGuards(JwtAuthGuard)
   @Delete('delete')
-  @HttpCode(200)
   async delete(@Query('id') id: string): Promise<DocumentType<LocalityModel>> {
     const deleteDoc = await this.localityService.delete(id);
     if (!deleteDoc) {
@@ -35,7 +34,6 @@ export class LocalityController {
 
   //@UseGuards(JwtAuthGuard)
   @Get('list')
-  @HttpCode(200)
   async getList(): Promise<DocumentType<LocalityModel>[]> {
     const localities = await this.localityService.getList();
     return localities;
