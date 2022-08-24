@@ -1,47 +1,54 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
-import { UserEmail } from 'src/decorators/user-email.decarator';
-import { CreateLocalityDto } from './dto/create-locality.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { DocumentType } from '@typegoose/typegoose';
+import {
+  LocalityCreateDto,
+} from './dto/create-dto';
+import { LocalityUpdateDto } from './dto/update-dto';
 import { Locality_NOT_FOUND } from './locality.constants';
 import { LocalityModel } from './locality.model';
 import { LocalityService } from './locality.service';
 
 @Controller('locality')
 export class LocalityController {
+  constructor(private readonly localityService: LocalityService) {}
 
-  constructor(private readonly localityService: LocalityService) {
-    // console.log(ConfigService)
-  }
-
-  @Post('create') 
-  async create(@Body() dto: CreateLocalityDto) {
-    return this.localityService.create(dto)
-  }
-
-  @Get()
-  async get(@Param('id') id:string) {
-
-  }
-
-  @Delete(':id')
-  async delete(@Param('id') id:string) {
-    const deleteDoc = await this.localityService.delete(id)
-    if(!deleteDoc) {
-      throw new HttpException(Locality_NOT_FOUND, HttpStatus.NOT_FOUND)
+  //@UseGuards(JwtAuthGuard)
+  @Delete('delete')
+  async delete(@Query('id') id: string): Promise<DocumentType<LocalityModel>> {
+    const deleteDoc = await this.localityService.delete(id);
+    if (!deleteDoc) {
+      throw new HttpException(Locality_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
+    return deleteDoc;
   }
 
-  @Patch(':id')
-  async patch(@Param('id') id:string, @Body() dto: LocalityModel) {
-
+  //@UseGuards(JwtAuthGuard)
+  @Get('list')
+  async getList(): Promise<DocumentType<LocalityModel>[]> {
+    const localities = await this.localityService.getList();
+    return localities;
   }
 
-  //TODO: locality
-  @UseGuards(JwtAuthGuard)
-  @Get('locality')
-  async test(@UserEmail() email: string) {
-    console.log('test', email)
-    return '11234'
+  //@UseGuards(JwtAuthGuard)
+  @Post('create')
+  @HttpCode(201)
+  async createLocality(@Body() dto: LocalityCreateDto): Promise<DocumentType<LocalityModel>> {
+    return this.localityService.create(dto);
+  }
+
+  @Post('edit')
+  @HttpCode(200)
+  async editLocality(@Body() dto: LocalityUpdateDto): Promise<DocumentType<LocalityModel>> {
+    return this.localityService.editLocality(dto);
   }
 }
