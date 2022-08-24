@@ -29,7 +29,6 @@ export class AgencyController {
   }
 
   @Post('create')
-  @HttpCode(200)
   async createAgency(
     @Body() body: AgencyCreateDto,
   ): Promise<DocumentType<AgencyModel>> {

@@ -1,2 +1,2 @@
-export { AgencyUpdateDto } from './agency-update-dto';
-export { AgencyCreateDto } from './agency-create.dto';
+export { AgencyUpdateDto } from './update-dto';
+export { AgencyCreateDto } from './create-dto';
