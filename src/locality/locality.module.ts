@@ -3,6 +3,7 @@ import { TypegooseModule } from 'nestjs-typegoose';
 import { LocalityController } from './locality.controller';
 import { LocalityModel } from './locality.model';
 import { LocalityService } from './locality.service';
+import { COLLECTIONS } from '../configs/mongo.config';
 
 @Module({
   controllers: [LocalityController],
@@ -11,11 +12,11 @@ import { LocalityService } from './locality.service';
       {
         typegooseClass: LocalityModel,
         schemaOptions: {
-          collection: 'Locality'
-        }
-      }
-    ])
+          collection: COLLECTIONS.LOCALITY,
+        },
+      },
+    ]),
   ],
-  providers: [LocalityService]
+  providers: [LocalityService],
 })
 export class LocalityModule {}
