@@ -1,24 +1,24 @@
 import { Module } from '@nestjs/common';
-import { AgencyController } from './agency.controller';
-import { AgencyService } from './agency.service';
+import { OrderService } from './order.service';
+import { OrderController } from './order.controller';
 import { TypegooseModule } from 'nestjs-typegoose';
 import { ConfigModule } from '@nestjs/config';
-import { AgencyModel } from './agency.model';
+import { OrderModel } from './order.model';
 import { COLLECTIONS } from '../configs/mongo.config';
 
 @Module({
-  controllers: [AgencyController],
+  providers: [OrderService],
+  controllers: [OrderController],
   imports: [
     TypegooseModule.forFeature([
       {
-        typegooseClass: AgencyModel,
+        typegooseClass: OrderModel,
         schemaOptions: {
-          collection: COLLECTIONS.AGENCY,
+          collection: COLLECTIONS.ORDER,
         },
       },
     ]),
     ConfigModule,
   ],
-  providers: [AgencyService],
 })
-export class AgencyModule {}
+export class OrderModule {}

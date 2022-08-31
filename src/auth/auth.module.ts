@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from 'src/configs/jwt.config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStratage } from './strategies/jwt.stratagy';
+import { COLLECTIONS } from '../configs/mongo.config';
 
 @Module({
   controllers: [AuthController],
@@ -16,7 +17,7 @@ import { JwtStratage } from './strategies/jwt.stratagy';
       {
         typegooseClass: UserModel,
         schemaOptions: {
-          collection: 'Auth',
+          collection: COLLECTIONS.AUTH,
         },
       },
     ]),
@@ -25,9 +26,9 @@ import { JwtStratage } from './strategies/jwt.stratagy';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: getJWTConfig
+      useFactory: getJWTConfig,
     }),
-    PassportModule
+    PassportModule,
   ],
   providers: [AuthService, JwtStratage],
 })
