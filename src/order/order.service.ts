@@ -11,9 +11,9 @@ export class OrderService {
     private readonly orderModel: ModelType<OrderModel>,
   ) {}
 
-  async getList(): Promise<DocumentType<OrderModel>[]> {
+  async getList(agencyId: string): Promise<DocumentType<OrderModel>[]> {
     const orders = await this.orderModel
-      .find()
+      .find({ agency: agencyId })
       .populate('agency')
       .populate({
         path: 'route',
@@ -27,7 +27,7 @@ export class OrderService {
           path: 'destination',
         },
       })
-      .exec()
+      .exec();
 
     return orders;
   }
@@ -42,7 +42,19 @@ export class OrderService {
   async createOrder(
     dto: OrderCreateDto,
   ): Promise<DocumentType<OrderModel> | null> {
-    return this.orderModel.create(dto);
+    const doc = await this.orderModel.create(dto);
+
+    return (await doc.populate('agency')).populate({
+      path: 'route',
+      populate: {
+        path: 'origin',
+      },
+    }).then((item) => item.populate({
+      path: 'route',
+      populate: {
+        path: 'destination',
+      },
+    }))
   }
 
   async deleteOrder(id: string): Promise<DocumentType<OrderModel>> {

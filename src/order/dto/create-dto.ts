@@ -5,17 +5,12 @@ import { Types } from 'mongoose';
 export class OrderCreateDto {
   @IsNotEmpty()
   @Type(() => Types.ObjectId)
-  agencyId: Types.ObjectId;
+  agency: Types.ObjectId;
 
-  @IsNotEmpty()
-  @Type(() => Types.ObjectId)
-  originId: Types.ObjectId;
+  route: {
+    origin: Types.ObjectId;
+    destination: Types.ObjectId;
+  }
 
-  @IsNotEmpty()
-  @Type(() => Types.ObjectId)
-  destinationId: Types.ObjectId;
-
-  @IsOptional()
-  @IsNumber()
   price?: number;
 }

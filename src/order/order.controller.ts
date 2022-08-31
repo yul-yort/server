@@ -17,15 +17,18 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get('list')
-  async getList(): Promise<DocumentType<OrderModel>[]> {
-    return this.orderService.getList();
+  async getList(
+    @Query('agencyId') agencyId: string,
+  ): Promise<DocumentType<OrderModel>[]> {
+    console.log(agencyId)
+    return this.orderService.getList(agencyId);
   }
 
   @Post('create')
   async createOrder(
     @Body() body: OrderCreateDto,
   ): Promise<DocumentType<OrderModel>> {
-      return this.orderService.createOrder(body);
+    return this.orderService.createOrder(body);
   }
 
   @Post('update')
@@ -33,6 +36,7 @@ export class OrderController {
   async updateAgency(
     @Body() body: OrderUpdateDto,
   ): Promise<DocumentType<OrderModel>> {
+    console.log(body)
     return this.orderService.updateOrder(body);
   }
 
@@ -40,6 +44,7 @@ export class OrderController {
   async deleteAgency(
     @Query('id') id: string,
   ): Promise<DocumentType<OrderModel>> {
+    console.log(id);
     return this.orderService.deleteOrder(id);
   }
 }
