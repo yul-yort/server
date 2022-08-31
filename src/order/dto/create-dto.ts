@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Types } from 'mongoose';
 
@@ -10,7 +10,7 @@ export class OrderCreateDto {
   route: {
     origin: Types.ObjectId;
     destination: Types.ObjectId;
-  }
+  };
 
   price?: number;
 }

@@ -11,8 +11,10 @@ export class OrderService {
     private readonly orderModel: ModelType<OrderModel>,
   ) {}
 
-  async getList(agencyId: string): Promise<DocumentType<OrderModel>[]> {
-    const orders = await this.orderModel
+  async getListByAgencyId(
+    agencyId: string,
+  ): Promise<DocumentType<OrderModel>[]> {
+    return await this.orderModel
       .find({ agency: agencyId })
       .populate('agency')
       .populate({
@@ -28,15 +30,25 @@ export class OrderService {
         },
       })
       .exec();
-
-    return orders;
   }
 
-  async getListByAgencyId(
-    agencyId: string,
-  ): Promise<DocumentType<OrderModel>[]> {
-    //TODO Как найти маршруты по одному агенству?
-    return this.orderModel.findOne({ agencyId });
+  async getList(): Promise<DocumentType<OrderModel>[]> {
+    return await this.orderModel
+      .find()
+      .populate('agency')
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'origin',
+        },
+      })
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'destination',
+        },
+      })
+      .exec();
   }
 
   async createOrder(
@@ -44,31 +56,65 @@ export class OrderService {
   ): Promise<DocumentType<OrderModel> | null> {
     const doc = await this.orderModel.create(dto);
 
-    return (await doc.populate('agency')).populate({
-      path: 'route',
-      populate: {
-        path: 'origin',
-      },
-    }).then((item) => item.populate({
-      path: 'route',
-      populate: {
-        path: 'destination',
-      },
-    }))
+    return (await doc.populate('agency'))
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'origin',
+        },
+      })
+      .then((item) =>
+        item.populate({
+          path: 'route',
+          populate: {
+            path: 'destination',
+          },
+        }),
+      );
   }
 
   async deleteOrder(id: string): Promise<DocumentType<OrderModel>> {
-    return this.orderModel.findByIdAndDelete(id).exec();
+    const doc = await this.orderModel.findByIdAndDelete(id);
+
+    return (await doc.populate('agency'))
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'origin',
+        },
+      })
+      .then((item) =>
+        item.populate({
+          path: 'route',
+          populate: {
+            path: 'destination',
+          },
+        }),
+      );
   }
 
   async updateOrder({
     id,
     ...dto
   }: OrderUpdateDto): Promise<DocumentType<OrderModel>> {
-    return this.orderModel
-      .findByIdAndUpdate(id, dto, {
-        returnDocument: 'after',
+    const doc = this.orderModel.findByIdAndUpdate(id, dto, {
+      returnDocument: 'after',
+    });
+
+    return (await doc.populate('agency'))
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'origin',
+        },
       })
-      .exec();
+      .then((item) =>
+        item.populate({
+          path: 'route',
+          populate: {
+            path: 'destination',
+          },
+        }),
+      );
   }
 }
