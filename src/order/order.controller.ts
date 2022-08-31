@@ -17,13 +17,7 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get('list')
-  async getList(
-    @Query('agencyId') agencyId: string,
-  ): Promise<DocumentType<OrderModel>[]> {
-    if (agencyId) {
-      return this.orderService.getListByAgencyId(agencyId);
-    }
-
+  async getList(): Promise<DocumentType<OrderModel>[]> {
     return this.orderService.getList();
   }
 
@@ -31,7 +25,7 @@ export class OrderController {
   async createOrder(
     @Body() body: OrderCreateDto,
   ): Promise<DocumentType<OrderModel>> {
-    return this.orderService.createOrder(body);
+      return this.orderService.createOrder(body);
   }
 
   @Post('update')

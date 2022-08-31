@@ -12,12 +12,22 @@ export class OrderService {
   ) {}
 
   async getList(): Promise<DocumentType<OrderModel>[]> {
-    const orders = await this.orderModel.find().exec();
-
-    // const result = orders.map((order) => ({
-    //   ...order,
-    //   agency: this.agencyService.getAgency(order.agencyId),
-    // }));
+    const orders = await this.orderModel
+      .find()
+      .populate('agency')
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'origin',
+        },
+      })
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'destination',
+        },
+      })
+      .exec()
 
     return orders;
   }
