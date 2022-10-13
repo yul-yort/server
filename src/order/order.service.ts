@@ -32,6 +32,54 @@ export class OrderService {
       .exec();
   }
 
+  async getListByRoute(
+    originId: string,
+    destinationId: string,
+  ): Promise<DocumentType<OrderModel>[]> {
+    return await this.orderModel
+      .find({ 'route.origin': originId, 'route.destination': destinationId })
+      .populate('agency')
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'origin',
+        },
+      })
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'destination',
+        },
+      })
+      .exec();
+  }
+
+  async getListByLocalityId(
+    localityId: string,
+  ): Promise<DocumentType<OrderModel>[]> {
+    return await this.orderModel
+      .find({
+        $or: [
+          { 'route.origin': localityId },
+          { 'route.destination': localityId },
+        ],
+      })
+      .populate('agency')
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'origin',
+        },
+      })
+      .populate({
+        path: 'route',
+        populate: {
+          path: 'destination',
+        },
+      })
+      .exec();
+  }
+
   async getList(): Promise<DocumentType<OrderModel>[]> {
     return await this.orderModel
       .find()
@@ -91,6 +139,10 @@ export class OrderService {
           },
         }),
       );
+  }
+
+  async deleteManyByAgencyId(agencyId: string): Promise<void> {
+    await this.orderModel.deleteMany({ agency: agencyId });
   }
 
   async updateOrder({

@@ -9,6 +9,7 @@ import { COLLECTIONS } from '../configs/mongo.config';
 @Module({
   providers: [OrderService],
   controllers: [OrderController],
+  exports: [OrderService],
   imports: [
     TypegooseModule.forFeature([
       {

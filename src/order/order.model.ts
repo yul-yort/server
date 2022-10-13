@@ -11,10 +11,11 @@ export class OrderRoute {
 }
 
 export interface OrderModel extends Base {}
+
 export class OrderModel extends TimeStamps {
   @prop({ ref: AgencyModel })
   agency: Ref<AgencyModel>;
-  @prop({ required: true,  _id: false  })
+  @prop({ required: true, _id: false })
   route: OrderRoute;
   @prop()
   price?: number;

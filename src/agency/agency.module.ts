@@ -5,10 +5,12 @@ import { TypegooseModule } from 'nestjs-typegoose';
 import { ConfigModule } from '@nestjs/config';
 import { AgencyModel } from './agency.model';
 import { COLLECTIONS } from '../configs/mongo.config';
+import { OrderModule } from '../order/order.module';
 
 @Module({
   controllers: [AgencyController],
   imports: [
+    OrderModule,
     TypegooseModule.forFeature([
       {
         typegooseClass: AgencyModel,

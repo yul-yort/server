@@ -6,6 +6,7 @@ import {
   Body,
   HttpCode,
   Delete,
+  BadRequestException,
 } from '@nestjs/common';
 import { DocumentType } from '@typegoose/typegoose/lib/types';
 
@@ -47,6 +48,10 @@ export class AgencyController {
   async deleteAgency(
     @Query('id') id: string,
   ): Promise<DocumentType<AgencyModel>> {
-    return this.agencyService.deleteAgency(id);
+    try {
+      return this.agencyService.deleteAgency(id);
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
   }
 }

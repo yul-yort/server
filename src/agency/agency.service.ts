@@ -3,12 +3,14 @@ import { InjectModel } from 'nestjs-typegoose';
 import { DocumentType, ModelType } from '@typegoose/typegoose/lib/types';
 import { AgencyModel } from './agency.model';
 import { AgencyCreateDto, AgencyUpdateDto } from './dto';
+import { OrderService } from '../order/order.service';
 
 @Injectable()
 export class AgencyService {
   constructor(
     @InjectModel(AgencyModel)
     private readonly agencyModel: ModelType<AgencyModel>,
+    private readonly orderService: OrderService,
   ) {}
 
   async getList(): Promise<DocumentType<AgencyModel>[]> {
@@ -24,6 +26,8 @@ export class AgencyService {
   }
 
   async deleteAgency(id: string): Promise<DocumentType<AgencyModel>> {
+    await this.orderService.deleteManyByAgencyId(id);
+
     return this.agencyModel.findByIdAndDelete(id).exec();
   }
 

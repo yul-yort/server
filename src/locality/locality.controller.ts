@@ -10,9 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { DocumentType } from '@typegoose/typegoose';
-import {
-  LocalityCreateDto,
-} from './dto/create-dto';
+import { LocalityCreateDto } from './dto/create-dto';
 import { LocalityUpdateDto } from './dto/update-dto';
 import { Locality_NOT_FOUND } from './locality.constants';
 import { LocalityModel } from './locality.model';
@@ -35,20 +33,23 @@ export class LocalityController {
   //@UseGuards(JwtAuthGuard)
   @Get('list')
   async getList(): Promise<DocumentType<LocalityModel>[]> {
-    const localities = await this.localityService.getList();
-    return localities;
+    return await this.localityService.getList();
   }
 
   //@UseGuards(JwtAuthGuard)
   @Post('create')
   @HttpCode(201)
-  async createLocality(@Body() dto: LocalityCreateDto): Promise<DocumentType<LocalityModel>> {
+  async createLocality(
+    @Body() dto: LocalityCreateDto,
+  ): Promise<DocumentType<LocalityModel>> {
     return this.localityService.create(dto);
   }
 
   @Post('edit')
   @HttpCode(200)
-  async editLocality(@Body() dto: LocalityUpdateDto): Promise<DocumentType<LocalityModel>> {
+  async editLocality(
+    @Body() dto: LocalityUpdateDto,
+  ): Promise<DocumentType<LocalityModel>> {
     return this.localityService.editLocality(dto);
   }
 }

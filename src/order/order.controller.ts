@@ -10,7 +10,7 @@ import {
 import { OrderService } from './order.service';
 import { DocumentType } from '@typegoose/typegoose/lib/types';
 import { OrderModel } from './order.model';
-import { OrderUpdateDto, OrderCreateDto } from './dto';
+import { OrderCreateDto, OrderUpdateDto } from './dto';
 
 @Controller('order')
 export class OrderController {
@@ -19,12 +19,18 @@ export class OrderController {
   @Get('list')
   async getList(
     @Query('agencyId') agencyId: string,
+    @Query('origin') originId: string,
+    @Query('destination') destinationId: string,
   ): Promise<DocumentType<OrderModel>[]> {
     if (agencyId) {
-      return this.orderService.getListByAgencyId(agencyId);
+      return await this.orderService.getListByAgencyId(agencyId);
     }
 
-    return this.orderService.getList();
+    if (originId && destinationId) {
+      return await this.orderService.getListByRoute(originId, destinationId);
+    }
+
+    return await this.orderService.getList();
   }
 
   @Post('create')
