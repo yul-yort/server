@@ -4,51 +4,55 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
-  HttpStatus,
+  Param,
+  ParseIntPipe,
+  Patch,
   Post,
-  Query,
 } from '@nestjs/common';
-import { DocumentType } from '@typegoose/typegoose';
-import {
-  LocalityCreateDto,
-} from './dto/create-dto';
-import { LocalityUpdateDto } from './dto/update-dto';
-import { Locality_NOT_FOUND } from './locality.constants';
-import { LocalityModel } from './locality.model';
+import { LocalityCreateDto } from './dto/create.dto';
+import { LocalityUpdateDto } from './dto/update.dto';
+import { Locality } from './locality.entity';
 import { LocalityService } from './locality.service';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('locality')
+@ApiTags('localities')
+@Controller('localities')
 export class LocalityController {
   constructor(private readonly localityService: LocalityService) {}
 
-  //@UseGuards(JwtAuthGuard)
-  @Delete('delete')
-  async delete(@Query('id') id: string): Promise<DocumentType<LocalityModel>> {
-    const deleteDoc = await this.localityService.delete(id);
-    if (!deleteDoc) {
-      throw new HttpException(Locality_NOT_FOUND, HttpStatus.NOT_FOUND);
-    }
-    return deleteDoc;
+  /**
+   * Delete locality
+   * @param id - id
+   */
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.localityService.delete(id);
   }
 
-  //@UseGuards(JwtAuthGuard)
-  @Get('list')
-  async getList(): Promise<DocumentType<LocalityModel>[]> {
-    const localities = await this.localityService.getList();
-    return localities;
+  /**
+   * Get locality
+   */
+  @Get()
+  async getList(): Promise<Locality[]> {
+    return await this.localityService.getList();
   }
 
-  //@UseGuards(JwtAuthGuard)
-  @Post('create')
-  @HttpCode(201)
-  async createLocality(@Body() dto: LocalityCreateDto): Promise<DocumentType<LocalityModel>> {
+  /**
+   * Create locality
+   * @param dto - create params body
+   */
+  @Post()
+  async create(@Body() dto: LocalityCreateDto): Promise<Locality> {
     return this.localityService.create(dto);
   }
 
-  @Post('edit')
+  /**
+   * Update locality
+   * @param dto
+   */
+  @Patch()
   @HttpCode(200)
-  async editLocality(@Body() dto: LocalityUpdateDto): Promise<DocumentType<LocalityModel>> {
-    return this.localityService.editLocality(dto);
+  async edit(@Body() dto: LocalityUpdateDto): Promise<Locality> {
+    return this.localityService.update(dto);
   }
 }

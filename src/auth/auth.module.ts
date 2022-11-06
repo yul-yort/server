@@ -1,35 +1,24 @@
 import { Module } from '@nestjs/common';
-import { TypegooseModule } from 'nestjs-typegoose';
-import { AuthController } from './auth.controller';
-import { UserModel } from './user.model';
-import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { getJWTConfig } from 'src/configs/jwt.config';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStratage } from './strategies/jwt.stratagy';
-import { COLLECTIONS } from '../configs/mongo.config';
+import { UsersModule } from '../users/users.module';
+import { AuthService } from './auth.service';
+import { jwtConstants } from './constants';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
+import { AuthController } from './auth.controller';
 
 @Module({
-  controllers: [AuthController],
   imports: [
-    TypegooseModule.forFeature([
-      {
-        typegooseClass: UserModel,
-        schemaOptions: {
-          collection: COLLECTIONS.AUTH,
-        },
-      },
-    ]),
-    ConfigModule,
-    //TODO: для чего imports и inject
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: getJWTConfig,
-    }),
+    UsersModule,
     PassportModule,
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '60s' },
+    }),
   ],
-  providers: [AuthService, JwtStratage],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
+  exports: [AuthService],
+  controllers: [AuthController],
 })
 export class AuthModule {}

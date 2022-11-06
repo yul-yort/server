@@ -1,37 +1,78 @@
-import { Injectable } from '@nestjs/common';
-import { ModelType, DocumentType } from '@typegoose/typegoose/lib/types';
-import { InjectModel } from 'nestjs-typegoose';
-import { LocalityCreateDto } from './dto/create-dto';
-import { LocalityUpdateDto } from './dto/update-dto';
-import { LocalityModel } from './locality.model';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { LocalityCreateDto } from './dto/create.dto';
+import { LocalityUpdateDto } from './dto/update.dto';
+import { Locality } from './locality.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, UpdateResult } from 'typeorm';
+import { validate } from 'class-validator';
+import { ValidateException } from '../customExeptions';
+import { Locality_FORBIDDEN, Locality_NOT_FOUND } from './locality.constants';
 
 @Injectable()
 export class LocalityService {
   constructor(
-    @InjectModel(LocalityModel)
-    private readonly localityModel: ModelType<LocalityModel>,
+    @InjectRepository(Locality)
+    private readonly localityRepository: Repository<Locality>,
   ) {}
 
-  async create(dto: LocalityCreateDto): Promise<DocumentType<LocalityModel> | null> {
-    return this.localityModel.create(dto);
+  async create(dto: LocalityCreateDto): Promise<Locality | null> {
+    const locality = new Locality();
+    locality.name = dto.name;
+    locality.coordinates = dto.coordinates;
+    locality.description = dto.description;
+    locality.region = dto.region;
+    locality.district = dto.district;
+
+    const fields = await validate(locality);
+
+    if (fields.length) {
+      throw new ValidateException(fields);
+    }
+
+    return await this.localityRepository.save(locality);
   }
 
-  async getList(): Promise<DocumentType<LocalityModel>[]> {
-    return this.localityModel.find();
+  async findOne(id: number): Promise<Locality> {
+    return this.localityRepository.findOneBy({ id });
   }
 
-  async delete(id: string): Promise<DocumentType<LocalityModel> | null> {
-    return this.localityModel.findByIdAndDelete(id).exec();
+  async getList(): Promise<Locality[]> {
+    return this.localityRepository.find();
   }
 
-  async editLocality({
-    id,
-    ...dto
-  }: LocalityUpdateDto): Promise<DocumentType<LocalityModel> | null> {
-    return this.localityModel
-      .findByIdAndUpdate(id, dto, {
-        returnDocument: 'after',
-      })
-      .exec();
+  async delete(id: number): Promise<void> {
+    try {
+      const { affected } = await this.localityRepository.delete(id);
+
+      if (affected === 0) {
+        throw new NotFoundException(Locality_NOT_FOUND);
+      }
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      } else if (error?.code === 'ER_ROW_IS_REFERENCED_2') {
+        throw new ForbiddenException(Locality_FORBIDDEN);
+      } else {
+        throw new InternalServerErrorException(error?.message);
+      }
+    }
+  }
+
+  async update({ id, ...dto }: LocalityUpdateDto): Promise<Locality> {
+    const { affected }: UpdateResult = await this.localityRepository.update(
+      { id },
+      dto,
+    );
+
+    if (affected === 0) {
+      throw new NotFoundException(Locality_NOT_FOUND);
+    }
+
+    return await this.findOne(id);
   }
 }

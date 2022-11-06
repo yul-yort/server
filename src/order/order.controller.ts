@@ -4,22 +4,33 @@ import {
   Delete,
   Get,
   HttpCode,
+  Param,
+  ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { DocumentType } from '@typegoose/typegoose/lib/types';
-import { OrderModel } from './order.model';
+import { Order } from './order.entity';
 import { OrderUpdateDto, OrderCreateDto } from './dto';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
-@Controller('order')
+@ApiTags('orders')
+@Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get('list')
-  async getList(
-    @Query('agencyId') agencyId: string,
-  ): Promise<DocumentType<OrderModel>[]> {
+  /**
+   * Orders list
+   * @param agencyId - optional agency id
+   */
+  @Get()
+  @ApiQuery({
+    name: 'agencyId',
+    description: 'Optional agency id',
+    required: false,
+  })
+  async getList(@Query('agencyId') agencyId?: number): Promise<Order[]> {
     if (agencyId) {
       return this.orderService.getListByAgencyId(agencyId);
     }
@@ -27,30 +38,31 @@ export class OrderController {
     return this.orderService.getList();
   }
 
-  @Post('create')
-  async createOrder(
-    @Body() body: OrderCreateDto,
-  ): Promise<DocumentType<OrderModel>> {
-    return this.orderService.createOrder(body);
+  /**
+   * Create order
+   * @param body
+   */
+  @Post()
+  async create(@Body() body: OrderCreateDto): Promise<Order> {
+    return this.orderService.create(body);
   }
 
-  @Post('update')
+  /**
+   * Update order
+   * @param body
+   */
+  @Patch()
   @HttpCode(200)
-  async updateAgency(
-    @Body() body: OrderUpdateDto,
-  ): Promise<DocumentType<OrderModel>> {
-    const serviceDto: OrderUpdateDto = {
-      id: body.id,
-      price: body.price,
-    };
-
-    return this.orderService.updateOrder(serviceDto);
+  async update(@Body() body: OrderUpdateDto): Promise<Order> {
+    return this.orderService.update(body);
   }
 
-  @Delete('delete')
-  async deleteAgency(
-    @Query('id') id: string,
-  ): Promise<DocumentType<OrderModel>> {
-    return this.orderService.deleteOrder(id);
+  /**
+   * Delete order
+   * @param id
+   */
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.orderService.delete(id);
   }
 }

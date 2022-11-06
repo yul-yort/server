@@ -1,120 +1,98 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from 'nestjs-typegoose';
-import { DocumentType, ModelType } from '@typegoose/typegoose/lib/types';
-import { OrderModel } from './order.model';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { Order } from './order.entity';
 import { OrderCreateDto, OrderUpdateDto } from './dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, UpdateResult } from 'typeorm';
+import { validate } from 'class-validator';
+import { ValidateException } from '../customExeptions';
+
+const ORDER_NOT_FOUND = 'Поездка не найдена';
+const ORDER_NOT_CREATED = 'Ошибка при создании поездки';
 
 @Injectable()
 export class OrderService {
   constructor(
-    @InjectModel(OrderModel)
-    private readonly orderModel: ModelType<OrderModel>,
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
   ) {}
 
-  async getListByAgencyId(
-    agencyId: string,
-  ): Promise<DocumentType<OrderModel>[]> {
-    return await this.orderModel
-      .find({ agency: agencyId })
-      .populate('agency')
-      .populate({
-        path: 'route',
-        populate: {
-          path: 'origin',
-        },
-      })
-      .populate({
-        path: 'route',
-        populate: {
-          path: 'destination',
-        },
-      })
-      .exec();
-  }
-
-  async getList(): Promise<DocumentType<OrderModel>[]> {
-    return await this.orderModel
-      .find()
-      .populate('agency')
-      .populate({
-        path: 'route',
-        populate: {
-          path: 'origin',
-        },
-      })
-      .populate({
-        path: 'route',
-        populate: {
-          path: 'destination',
-        },
-      })
-      .exec();
-  }
-
-  async createOrder(
-    dto: OrderCreateDto,
-  ): Promise<DocumentType<OrderModel> | null> {
-    const doc = await this.orderModel.create(dto);
-
-    return (await doc.populate('agency'))
-      .populate({
-        path: 'route',
-        populate: {
-          path: 'origin',
-        },
-      })
-      .then((item) =>
-        item.populate({
-          path: 'route',
-          populate: {
-            path: 'destination',
-          },
-        }),
-      );
-  }
-
-  async deleteOrder(id: string): Promise<DocumentType<OrderModel>> {
-    const doc = await this.orderModel.findByIdAndDelete(id);
-
-    return (await doc.populate('agency'))
-      .populate({
-        path: 'route',
-        populate: {
-          path: 'origin',
-        },
-      })
-      .then((item) =>
-        item.populate({
-          path: 'route',
-          populate: {
-            path: 'destination',
-          },
-        }),
-      );
-  }
-
-  async updateOrder({
-    id,
-    ...dto
-  }: OrderUpdateDto): Promise<DocumentType<OrderModel>> {
-    const doc = this.orderModel.findByIdAndUpdate(id, dto, {
-      returnDocument: 'after',
+  async getListByAgencyId(agencyId: number): Promise<Order[]> {
+    return await this.orderRepository.find({
+      where: {
+        agencyId: agencyId,
+      },
+      relations: { origin: true, destination: true, agency: true },
     });
+  }
 
-    return (await doc.populate('agency'))
-      .populate({
-        path: 'route',
-        populate: {
-          path: 'origin',
-        },
-      })
-      .then((item) =>
-        item.populate({
-          path: 'route',
-          populate: {
-            path: 'destination',
-          },
-        }),
-      );
+  async getList(): Promise<Order[]> {
+    return await this.orderRepository.find({
+      relations: { origin: true, destination: true, agency: true },
+    });
+  }
+
+  async findOne(id: number): Promise<Order> {
+    return this.orderRepository.findOne({
+      where: { id },
+      relations: { origin: true, destination: true, agency: true },
+    });
+  }
+
+  async create(dto: OrderCreateDto): Promise<Order | null> {
+    const order = new Order();
+    order.price = dto.price;
+    order.agencyId = dto.agency;
+    order.origin = dto.originId;
+    order.destination = dto.destinationId;
+
+    const fields = await validate(order);
+
+    if (fields.length) {
+      throw new ValidateException(fields);
+    }
+
+    try {
+      return await this.orderRepository.save(order);
+    } catch (error) {
+      if (error?.code === 'ER_NO_REFERENCED_ROW_2') {
+        throw new BadRequestException(ORDER_NOT_CREATED, error?.sqlMessage);
+      } else {
+        throw new InternalServerErrorException(error?.message);
+      }
+    }
+  }
+
+  async delete(id: number): Promise<void> {
+    const { affected } = await this.orderRepository.delete(id);
+
+    if (affected === 0) {
+      throw new NotFoundException(ORDER_NOT_FOUND);
+    }
+  }
+
+  async deleteByAgencyId(agencyId: number): Promise<void> {
+    try {
+      await this.orderRepository.delete({ agencyId });
+    } catch (error) {
+      throw new BadRequestException(error?.message);
+    }
+  }
+
+  async update({ id, ...dto }: OrderUpdateDto): Promise<Order> {
+    const { affected }: UpdateResult = await this.orderRepository.update(
+      { id },
+      dto,
+    );
+
+    if (affected === 0) {
+      throw new NotFoundException(ORDER_NOT_FOUND);
+    }
+
+    return await this.findOne(id);
   }
 }

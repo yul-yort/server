@@ -1,45 +1,28 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  HttpCode,
-  Post,
-  Res,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
-import { ALREADY_REGISTERED_ERROR } from './auth.constants';
+import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {
-    console.log(authService);
-  }
+  constructor(private readonly authService: AuthService) {}
 
-  @UsePipes(new ValidationPipe())
-  @Post('register')
-  async register(@Body() dto: AuthDto) {
-    const oldUser = await this.authService.findUser(dto.login);
-    if (oldUser) {
-      throw new BadRequestException(ALREADY_REGISTERED_ERROR);
-    }
-
-    return this.authService.createUser(dto);
-  }
-
-  @UsePipes(new ValidationPipe())
+  /**
+   * Login method
+   * @param email - email
+   * @param password - password
+   * @param response - response
+   */
   @HttpCode(200)
   @Post('login')
-  async login(@Body() { login, password }: AuthDto, @Res({ passthrough: true }) response) {
-    const { email } = await this.authService.validateUser(login, password);
+  async login(
+    @Body() { email, password }: AuthDto,
+    @Res({ passthrough: true }) response,
+  ) {
+    const token = await this.authService.login(email, password);
 
-    const token = await this.authService.login(email)
-   
     response.cookie('access_token', `${token.access_token}`);
-
-    //TODO: нужно возвращать JSON (можно ли будет не возвращать)
-    return token
+    return token;
   }
 }
