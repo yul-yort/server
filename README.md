@@ -28,14 +28,13 @@ docker-compose down
 npm run start
 ```
 
-Приложение запустится на порту:9000
-
-Swagger будет доступен по адресу http://localhost:9000/swagger
-
-## watch mode
+## watch mode (запускаем при разработке)
 ```bash
 npm run start:dev
 ```
+Приложение запустится на порту:9000
+
+Swagger будет доступен по адресу http://localhost:9000/swagger
 
 ## production mode
 ```bash
