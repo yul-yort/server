@@ -1,4 +1,10 @@
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 /** Широта */
 export type TLocalityLatitude = string;
@@ -23,6 +29,8 @@ export class LocalityCreateDto {
 
   @IsOptional()
   @IsArray()
+  @ArrayMinSize(2)
+  @ArrayMaxSize(2)
   @IsString({ each: true })
   coordinates?: [TLocalityLatitude, TLocalityLongitude];
 }

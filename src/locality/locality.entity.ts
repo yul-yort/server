@@ -1,5 +1,12 @@
 import { BaseEntity } from '../base.entity';
-import { IsArray, IsOptional, IsString, Length } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 import { Column, Entity } from 'typeorm';
 
 @Entity('locality')
@@ -29,6 +36,8 @@ export class Locality extends BaseEntity {
 
   @IsOptional()
   @IsArray()
+  @ArrayMinSize(2)
+  @ArrayMaxSize(2)
   @IsString({ each: true })
   @Column('simple-array', { default: null })
   coordinates?: string[] | null;
