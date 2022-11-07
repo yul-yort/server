@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  HttpCode,
   Delete,
   ParseIntPipe,
   Param,
@@ -50,7 +49,6 @@ export class AgencyController {
    * Update agency
    */
   @Patch()
-  @HttpCode(200)
   async updateAgency(@Body() body: AgencyUpdateDto): Promise<Agency> {
     return this.agencyService.update(body);
   }

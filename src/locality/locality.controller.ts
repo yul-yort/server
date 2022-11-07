@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   Param,
   ParseIntPipe,
   Patch,
@@ -51,7 +50,6 @@ export class LocalityController {
    * @param dto
    */
   @Patch()
-  @HttpCode(200)
   async edit(@Body() dto: LocalityUpdateDto): Promise<Locality> {
     return this.localityService.update(dto);
   }

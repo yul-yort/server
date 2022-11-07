@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   Param,
   ParseIntPipe,
   Patch,
@@ -52,7 +51,6 @@ export class OrderController {
    * @param body
    */
   @Patch()
-  @HttpCode(200)
   async update(@Body() body: OrderUpdateDto): Promise<Order> {
     return this.orderService.update(body);
   }
