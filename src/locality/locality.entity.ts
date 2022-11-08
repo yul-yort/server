@@ -17,19 +17,16 @@ export class Locality extends BaseEntity {
   name: string;
 
   @IsString()
-  @Length(1)
   @IsOptional()
   @Column({ default: '' })
   district?: string;
 
   @IsString()
-  @Length(1)
   @IsOptional()
   @Column({ default: '' })
   region?: string;
 
   @IsString()
-  @Length(1)
   @IsOptional()
   @Column({ default: '' })
   description?: string;

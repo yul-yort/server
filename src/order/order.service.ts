@@ -57,7 +57,8 @@ export class OrderService {
     }
 
     try {
-      return await this.orderRepository.save(order);
+      const createdOrder = await this.orderRepository.save(order);
+      return await this.findOne(createdOrder.id);
     } catch (error) {
       if (error?.code === 'ER_NO_REFERENCED_ROW_2') {
         throw new BadRequestException(ORDER_NOT_CREATED, error?.sqlMessage);
