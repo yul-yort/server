@@ -33,14 +33,22 @@ export class Order extends BaseEntity {
    */
   @ApiProperty({ type: () => Locality, nullable: true })
   @ManyToOne(() => Locality, (locality) => locality)
-  @JoinColumn()
+  @JoinColumn({ name: 'originId' })
   origin: number;
+
+  @ApiProperty({ writeOnly: true })
+  @Column({ name: 'originId', select: false })
+  originId: number;
 
   /**
    * Destination
    */
   @ApiProperty({ type: () => Locality, nullable: true })
   @ManyToOne(() => Locality, (locality) => locality)
-  @JoinColumn()
+  @JoinColumn({ name: 'destinationId' })
   destination: number;
+
+  @ApiProperty({ writeOnly: true })
+  @Column({ name: 'destinationId', select: false })
+  destinationId: number;
 }

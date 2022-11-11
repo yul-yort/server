@@ -12,7 +12,8 @@ import {
 import { OrderService } from './order.service';
 import { Order } from './order.entity';
 import { OrderUpdateDto, OrderCreateDto } from './dto';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
+import { OrderGetDto } from './dto/get.dto';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -21,25 +22,16 @@ export class OrderController {
 
   /**
    * Orders list
-   * @param agencyId - optional agency id
+   * @param dto - поля запроса
    */
   @Get()
-  @ApiQuery({
-    name: 'agencyId',
-    description: 'Optional agency id',
-    required: false,
-  })
-  async getList(@Query('agencyId') agencyId?: number): Promise<Order[]> {
-    if (agencyId) {
-      return this.orderService.getListByAgencyId(agencyId);
-    }
-
-    return this.orderService.getList();
+  async getList(@Query() dto?: OrderGetDto): Promise<Order[]> {
+    return this.orderService.getList(dto);
   }
 
   /**
    * Create order
-   * @param body
+   * @param body - поля для создания
    */
   @Post()
   async create(@Body() body: OrderCreateDto): Promise<Order> {

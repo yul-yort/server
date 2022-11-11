@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { validate } from 'class-validator';
 import { ValidateException } from '../customExeptions';
+import { OrderGetDto } from './dto/get.dto';
 
 const ORDER_NOT_FOUND = 'Поездка не найдена';
 const ORDER_NOT_CREATED = 'Ошибка при создании поездки';
@@ -21,17 +22,15 @@ export class OrderService {
     private readonly orderRepository: Repository<Order>,
   ) {}
 
-  async getListByAgencyId(agencyId: number): Promise<Order[]> {
+  async getList(dto?: OrderGetDto): Promise<Order[]> {
+    const { originId, destinationId, agencyId } = dto;
+
     return await this.orderRepository.find({
       where: {
-        agencyId: agencyId,
+        agencyId: agencyId && Number(agencyId),
+        originId: originId && Number(originId),
+        destinationId: destinationId && Number(destinationId),
       },
-      relations: { origin: true, destination: true, agency: true },
-    });
-  }
-
-  async getList(): Promise<Order[]> {
-    return await this.orderRepository.find({
       relations: { origin: true, destination: true, agency: true },
     });
   }
@@ -47,8 +46,8 @@ export class OrderService {
     const order = new Order();
     order.price = dto.price;
     order.agencyId = dto.agency;
-    order.origin = dto.originId;
-    order.destination = dto.destinationId;
+    order.originId = dto.originId;
+    order.destinationId = dto.destinationId;
 
     const fields = await validate(order);
 
