@@ -3,54 +3,56 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
+  Param,
+  ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { DocumentType } from '@typegoose/typegoose/lib/types';
-import { OrderModel } from './order.model';
+import { Order } from './order.entity';
 import { OrderUpdateDto, OrderCreateDto } from './dto';
+import { ApiTags } from '@nestjs/swagger';
+import { OrderGetDto } from './dto/get.dto';
 
-@Controller('order')
+@ApiTags('orders')
+@Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get('list')
-  async getList(
-    @Query('agencyId') agencyId: string,
-  ): Promise<DocumentType<OrderModel>[]> {
-    if (agencyId) {
-      return this.orderService.getListByAgencyId(agencyId);
-    }
-
-    return this.orderService.getList();
+  /**
+   * Orders list
+   * @param dto - поля запроса
+   */
+  @Get()
+  async getList(@Query() dto?: OrderGetDto): Promise<Order[]> {
+    return this.orderService.getList(dto);
   }
 
-  @Post('create')
-  async createOrder(
-    @Body() body: OrderCreateDto,
-  ): Promise<DocumentType<OrderModel>> {
-    return this.orderService.createOrder(body);
+  /**
+   * Create order
+   * @param body - поля для создания
+   */
+  @Post()
+  async create(@Body() body: OrderCreateDto): Promise<Order> {
+    return this.orderService.create(body);
   }
 
-  @Post('update')
-  @HttpCode(200)
-  async updateAgency(
-    @Body() body: OrderUpdateDto,
-  ): Promise<DocumentType<OrderModel>> {
-    const serviceDto: OrderUpdateDto = {
-      id: body.id,
-      price: body.price,
-    };
-
-    return this.orderService.updateOrder(serviceDto);
+  /**
+   * Update order
+   * @param body
+   */
+  @Patch()
+  async update(@Body() body: OrderUpdateDto): Promise<Order> {
+    return this.orderService.update(body);
   }
 
-  @Delete('delete')
-  async deleteAgency(
-    @Query('id') id: string,
-  ): Promise<DocumentType<OrderModel>> {
-    return this.orderService.deleteOrder(id);
+  /**
+   * Delete order
+   * @param id
+   */
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.orderService.delete(id);
   }
 }

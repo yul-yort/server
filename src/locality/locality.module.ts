@@ -1,22 +1,12 @@
 import { Module } from '@nestjs/common';
-import { TypegooseModule } from 'nestjs-typegoose';
 import { LocalityController } from './locality.controller';
-import { LocalityModel } from './locality.model';
+import { Locality } from './locality.entity';
 import { LocalityService } from './locality.service';
-import { COLLECTIONS } from '../configs/mongo.config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([Locality])],
   controllers: [LocalityController],
-  imports: [
-    TypegooseModule.forFeature([
-      {
-        typegooseClass: LocalityModel,
-        schemaOptions: {
-          collection: COLLECTIONS.LOCALITY,
-        },
-      },
-    ]),
-  ],
   providers: [LocalityService],
 })
 export class LocalityModule {}

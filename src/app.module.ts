@@ -1,28 +1,34 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypegooseModule } from 'nestjs-typegoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { getMongoConfig } from './configs/mongo.config';
 import { LocalityModule } from './locality/locality.module';
-import { AgencyModule } from './agency/agency.module';
 import { OrderModule } from './order/order.module';
+import { AgencyModule } from './agencies/agency.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    TypegooseModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: getMongoConfig,
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'root',
+      database: 'yul-yort-test',
+      autoLoadEntities: true,
+      //TODO Setting synchronize: true shouldn't be used in
+      // production - otherwise you can lose production data.
+      synchronize: true,
     }),
-    AuthModule,
+    UsersModule,
     LocalityModule,
-    AgencyModule,
+    AuthModule,
     OrderModule,
+    AgencyModule,
   ],
-  controllers: [AppController],
   providers: [AppService],
+  controllers: [AppController],
 })
 export class AppModule {}

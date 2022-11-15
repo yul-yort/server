@@ -1,7 +1,7 @@
 # compiled output
 /dist
+/documentation
 /node_modules
-/data-mongo
 
 # Logs
 logs

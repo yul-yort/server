@@ -1,33 +1,62 @@
-# YUL-YORT-BACKEND
+## Description
 
-# Первый запуск
-<!-- docker build -t top-api . - создаем image для сервера  -->
-1. docker-compose up -d - запускаем контейнеры 
+yul-yort-back-end project documentation.
 
-# Основные команды Docker
-#### h4 Image
-#### h5  общий синтаксис - docker image [название команды]
-1. ls - показывает все образы Docker
-2. build - собирает образ с нуля.
-3. rm — удаляет образ Docker из системы.
-4. prune -a - удалить все image
+## Installation
 
-#### h4 Сontainer
-#### h5  общий синтаксис - docker container [название команды]
-1. create — создает контейнер из выбранного образа.
-2. start — активирует уже существующий контейнер.
-3. run — создает новый контейнер и сразу включает его.
-4. ls — отображает все существующие контейнеры.
-5. logs — выводит в консоль логи (то есть журнал событий).
-6. stop/kill - выключает контейнер (kill - игнорируя сохранение пользовательских данных)
-7. rm — удаляет выбранный контейнер
+```bash
+npm install
+```
 
-#### h4 docker-compose
-1. docker-compose up 
-2. docker-compose down
+# Docker
+- сперва запускаем приложение Docker на компьютере
+## Running the docker
+```bash
+docker-compose up
+```
 
+## Stopping the docker
 
-#### h4 Прочие команды
-1. docker version
-2. docker login
-3. docker system prune - выполняет некую чистку, удалив из системы контейнеры.
+```bash
+docker-compose down
+```
+
+# Running the app
+
+## development
+```bash
+npm run start
+```
+
+## watch mode (запускаем при разработке)
+```bash
+npm run start:dev
+```
+Приложение запустится на порту:9000
+
+Swagger будет доступен по адресу http://localhost:9000/swagger
+
+## production mode
+```bash
+npm run start:prod
+```
+
+# Test
+
+```bash
+# unit tests
+npm run test
+
+# e2e tests
+npm run test:e2e
+
+# test coverage
+npm run test:cov
+```
+# Documentation
+
+## Documentation generate
+```bash
+npm run docgen
+```
+Документация будет доступна по адресу http://127.0.0.1:8080 или откройте файл [documentation/index.html](documentation/index.html) в браузере. 

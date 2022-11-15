@@ -1,52 +1,48 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { ModelType } from '@typegoose/typegoose/lib/types';
-import { InjectModel } from 'nestjs-typegoose';
-import { AuthDto } from './dto/auth.dto';
-import { UserModel } from './user.model';
-import { genSalt, hash, compare } from 'bcryptjs';
-import { USER_NOT_FOUND_ERROR, WRONG_PASSWORD_ERROR } from './auth.constants';
+import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../users/user.entity';
+import { compare } from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(UserModel) private readonly userModel: ModelType<UserModel>,
-    private readonly jwtService: JwtService
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
-  async createUser(dto: AuthDto) {
-    const salt = await genSalt(10);
-    const newUser = new this.userModel({
-      email: dto.login,
-      passwordHash: await hash(dto.password, salt),
-    });
-
-    return newUser.save();
-  }
 
   async findUser(email: string) {
-    return this.userModel.findOne({ email }).exec();
+    return this.usersService.findForValidate(email);
   }
 
-  async validateUser(email: string, password: string): Promise<Pick<UserModel, 'email'>> {
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<Pick<User, 'email'>> {
     const user = await this.findUser(email);
 
-    if(!user) {
-      throw new UnauthorizedException(USER_NOT_FOUND_ERROR)
+    if (!user) {
+      throw new UnauthorizedException('Пользователь не найден');
     }
-    const isCorrectPassword = await compare(password, user.passwordHash)
+    const isCorrectPassword = await compare(password, user.passwordHash);
 
-    if(!isCorrectPassword) {
-      throw new UnauthorizedException(WRONG_PASSWORD_ERROR)
+    if (!isCorrectPassword) {
+      throw new UnauthorizedException('Неверно ввден пароль');
     }
 
-    return {email: user.email}
+    return { email: user.email };
   }
 
-  async login(email: string) {
-    const payload = {email}
-    
+  async login(
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
+    const { email: validatedEmail } = await this.validateUser(email, password);
+
+    const payload = { validatedEmail };
+
     return {
-      access_token: await this.jwtService.signAsync(payload)
-    }
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }
