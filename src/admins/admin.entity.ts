@@ -1,26 +1,26 @@
-import { BaseEntity } from '../base.entity';
 import { Entity, Column } from 'typeorm';
+import { BaseEntity } from '../base.entity';
 import { IsEmail, IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('user')
-export class User extends BaseEntity {
+@Entity('admins')
+export class Admin extends BaseEntity {
   /**
-   * Name of user
+   * Name of admin
    */
   @IsString()
   @Column()
   firstName: string;
 
   /**
-   * Lastname of user
+   * Lastname of admin
    */
   @IsString()
   @Column()
   lastName: string;
 
   /**
-   * Email of user
+   * Email of admin
    */
   @IsEmail()
   @Column({ unique: true })

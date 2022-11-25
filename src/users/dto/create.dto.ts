@@ -1,6 +1,6 @@
 import { IsEmail, IsString, Length } from 'class-validator';
 
-export class CreateUserDto {
+export class UserCreateDto {
   /**
    * Name of user
    */

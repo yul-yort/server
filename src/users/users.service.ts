@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
+import { UserCreateDto } from './dto/create.dto';
 import { User } from './user.entity';
 import { validate } from 'class-validator';
 import { ValidateException } from '../customExeptions';
@@ -20,7 +20,7 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: UserCreateDto): Promise<User> {
     const oldUser = await this.findForValidate(createUserDto.email);
 
     if (oldUser) {

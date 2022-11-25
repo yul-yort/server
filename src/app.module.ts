@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { LocalityModule } from './locality/locality.module';
 import { OrderModule } from './order/order.module';
 import { AgencyModule } from './agencies/agency.module';
+import { AdminsModule } from './admins/admins.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AgencyModule } from './agencies/agency.module';
     AuthModule,
     OrderModule,
     AgencyModule,
+    AdminsModule,
   ],
   providers: [AppService],
   controllers: [AppController],
