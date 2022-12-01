@@ -23,7 +23,6 @@ export class Admin extends BaseEntity {
    * Email of admin
    */
   @IsEmail()
-  @Index({ unique: true })
   @Column({ unique: true })
   email: string;
 
