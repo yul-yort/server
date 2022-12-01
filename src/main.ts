@@ -3,13 +3,13 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ValidateException } from './customExeptions';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { isDev } from './constants';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
-    credentials: true,
-  });
+
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (fields) => {
@@ -19,18 +19,26 @@ async function bootstrap() {
   );
   app.setGlobalPrefix('api');
 
-  const options = new DocumentBuilder()
-    .setTitle('Yul-yort API')
-    .setDescription('The yul-yort API description')
-    .setVersion('1.0')
-    .addTag('yul-yort')
-    .addBearerAuth()
-    .build();
+  if (isDev) {
+    app.enableCors({
+      origin: ['http://localhost:3000', 'http://localhost:3001'],
+      credentials: true,
+    });
 
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('swagger', app, document);
+    const options = new DocumentBuilder()
+      .setTitle('Yul-yort API')
+      .setDescription('The yul-yort API description')
+      .setVersion('1.0')
+      .addTag('yul-yort')
+      .addBearerAuth()
+      .build();
 
-  await app.listen(9000);
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup('swagger', app, document);
+  }
+
+  await app.listen(9000, '0.0.0.0');
+
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 

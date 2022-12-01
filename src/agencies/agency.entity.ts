@@ -1,6 +1,6 @@
 import { BaseEntity } from '../base.entity';
-import { IsArray, IsOptional, IsString } from 'class-validator';
 import { Column, Entity } from 'typeorm';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('agency')

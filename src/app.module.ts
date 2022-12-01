@@ -7,6 +7,8 @@ import { AppService } from './app.service';
 import { LocalityModule } from './locality/locality.module';
 import { OrderModule } from './order/order.module';
 import { AgencyModule } from './agencies/agency.module';
+import { AdminsModule } from './admins/admins.module';
+import { isDev } from './constants';
 
 @Module({
   imports: [
@@ -18,15 +20,16 @@ import { AgencyModule } from './agencies/agency.module';
       password: 'root',
       database: 'yul-yort-test',
       autoLoadEntities: true,
-      //TODO Setting synchronize: true shouldn't be used in
+      // Setting synchronize: true shouldn't be used in
       // production - otherwise you can lose production data.
-      synchronize: true,
+      synchronize: isDev,
     }),
     UsersModule,
     LocalityModule,
     AuthModule,
     OrderModule,
     AgencyModule,
+    AdminsModule,
   ],
   providers: [AppService],
   controllers: [AppController],
