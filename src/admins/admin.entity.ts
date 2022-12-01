@@ -1,4 +1,4 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, Index } from 'typeorm';
 import { BaseEntity } from '../base.entity';
 import { IsEmail, IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
@@ -23,6 +23,7 @@ export class Admin extends BaseEntity {
    * Email of admin
    */
   @IsEmail()
+  @Index({ unique: true })
   @Column({ unique: true })
   email: string;
 

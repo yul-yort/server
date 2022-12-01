@@ -4,10 +4,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { ValidateException } from './customExeptions';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { isDev } from './constants';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       exceptionFactory: (fields) => {
@@ -19,7 +21,7 @@ async function bootstrap() {
 
   if (isDev) {
     app.enableCors({
-      origin: true,
+      origin: ['http://localhost:3000', 'http://localhost:3001'],
       credentials: true,
     });
 
@@ -35,7 +37,8 @@ async function bootstrap() {
     SwaggerModule.setup('swagger', app, document);
   }
 
-  await app.listen(9000);
+  await app.listen(9000, '0.0.0.0');
+
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 

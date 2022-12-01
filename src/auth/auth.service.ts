@@ -1,48 +1,51 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../users/user.entity';
 import { compare } from 'bcryptjs';
+import { AdminsService } from '../admins/admins.service';
+import { Admin } from '../admins/admin.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly adminsService: AdminsService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async findUser(email: string) {
-    return this.usersService.findForValidate(email);
+  async findAdmin(email: string) {
+    return this.adminsService.findForValidate(email);
   }
 
-  async validateUser(
+  async validateAdmin(
     email: string,
     password: string,
-  ): Promise<Pick<User, 'email'>> {
-    const user = await this.findUser(email);
+  ): Promise<Omit<Admin, 'passwordHash'>> {
+    const admin = await this.findAdmin(email);
 
-    if (!user) {
-      throw new UnauthorizedException('Пользователь не найден');
+    if (!admin) {
+      throw new NotFoundException('Пользователь не найден');
     }
-    const isCorrectPassword = await compare(password, user.passwordHash);
+
+    const isCorrectPassword = await compare(password, admin.passwordHash);
 
     if (!isCorrectPassword) {
-      throw new UnauthorizedException('Неверно ввден пароль');
+      throw new UnauthorizedException('Неверно введён пароль');
     }
 
-    return { email: user.email };
+    return await this.adminsService.findOne(admin.id);
   }
 
   async login(
     email: string,
     password: string,
   ): Promise<{ access_token: string }> {
-    const { email: validatedEmail } = await this.validateUser(email, password);
-
-    const payload = { validatedEmail };
+    const admin = await this.validateAdmin(email, password);
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.signAsync({ ...admin }),
     };
   }
 }
