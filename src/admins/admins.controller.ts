@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -14,6 +15,7 @@ import { AdminCreateDto } from './dto/create.dto';
 import { Admin } from './admin.entity';
 import { AdminsService } from './admins.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth-guard.service';
+import { AdminUpdateDto } from './dto/update.dto';
 
 const endpoint = 'admins';
 
@@ -47,7 +49,9 @@ export class AdminsController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Req() request): Promise<Admin> {
-    return request.user.admin;
+    const adminId = request.user.admin.id;
+
+    return this.adminsService.findOne(adminId);
   }
 
   /**
@@ -68,5 +72,15 @@ export class AdminsController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.adminsService.remove(id);
+  }
+
+  /**
+   * Update admin
+   * @param dto - Admin update dto
+   */
+  @UseGuards(JwtAuthGuard)
+  @Patch()
+  async update(@Body() dto: AdminUpdateDto): Promise<Admin> {
+    return await this.adminsService.update(dto);
   }
 }

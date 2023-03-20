@@ -6,12 +6,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { AdminCreateDto } from './dto/create.dto';
 import { Admin } from './admin.entity';
 import { validate } from 'class-validator';
 import { ValidateException } from '../customExeptions';
 import { genSalt, hash } from 'bcryptjs';
+import { AdminUpdateDto } from './dto/update.dto';
 
 @Injectable()
 export class AdminsService {
@@ -20,13 +21,13 @@ export class AdminsService {
     private readonly adminRepository: Repository<Admin>,
   ) {}
 
-  async hashPassword(password) {
+  private async hashPassword(password) {
     const salt = await genSalt(10);
 
     return await hash(password, salt);
   }
 
-  deletePasswordHash(admin) {
+  private deletePasswordHash(admin) {
     delete admin.passwordHash;
     return admin;
   }
@@ -95,5 +96,22 @@ export class AdminsService {
     if (affected === 0) {
       throw new NotFoundException(`Admin with id ${id} not found`);
     }
+  }
+
+  async update({ id, password, ...dto }: AdminUpdateDto): Promise<Admin> {
+    if (password) {
+      dto['passwordHash'] = await this.hashPassword(password);
+    }
+
+    const { affected }: UpdateResult = await this.adminRepository.update(
+      { id },
+      dto,
+    );
+
+    if (affected === 0) {
+      throw new NotFoundException('Обновляемый администратор не найден');
+    }
+
+    return await this.findOne(id);
   }
 }
