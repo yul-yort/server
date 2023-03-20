@@ -35,6 +35,7 @@ async function bootstrap() {
       .setVersion('1.0')
       .addTag('yul-yort')
       .addBearerAuth()
+      .addSecurityRequirements('bearer')
       .build();
 
     const document = SwaggerModule.createDocument(app, options);
