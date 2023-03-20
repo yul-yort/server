@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { jwtConstants } from '../constants';
+import { JwtAuthGuard } from './guards/jwt-auth-guard.service';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -32,6 +33,7 @@ export class AuthController {
   /**
    * Logout method
    */
+  @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Res({ passthrough: true }) response) {
     const date = new Date(Date.now());

@@ -25,6 +25,7 @@ export class LocalityController {
    * Delete locality
    * @param id - id
    */
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.localityService.delete(id);
@@ -33,7 +34,6 @@ export class LocalityController {
   /**
    * Get locality
    */
-  @UseGuards(JwtAuthGuard)
   @Get()
   async getList(): Promise<Locality[]> {
     return await this.localityService.getList();
@@ -43,6 +43,7 @@ export class LocalityController {
    * Create locality
    * @param dto - create params body
    */
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() dto: LocalityCreateDto): Promise<Locality> {
     return this.localityService.create(dto);
@@ -52,6 +53,7 @@ export class LocalityController {
    * Update locality
    * @param dto
    */
+  @UseGuards(JwtAuthGuard)
   @Patch()
   async edit(@Body() dto: LocalityUpdateDto): Promise<Locality> {
     return this.localityService.update(dto);
