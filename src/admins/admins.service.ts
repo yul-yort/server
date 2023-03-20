@@ -20,6 +20,17 @@ export class AdminsService {
     private readonly adminRepository: Repository<Admin>,
   ) {}
 
+  async hashPassword(password) {
+    const salt = await genSalt(10);
+
+    return await hash(password, salt);
+  }
+
+  deletePasswordHash(admin) {
+    delete admin.passwordHash;
+    return admin;
+  }
+
   async create(createAdminDto: AdminCreateDto): Promise<Admin> {
     const oldAdmin = await this.findForValidate(createAdminDto.email);
 
@@ -29,8 +40,7 @@ export class AdminsService {
       );
     }
 
-    const salt = await genSalt(10);
-    const passwordHash = await hash(createAdminDto.password, salt);
+    const passwordHash = await this.hashPassword(createAdminDto.password);
 
     const admin = new Admin();
     admin.firstName = createAdminDto.firstName;
@@ -45,9 +55,8 @@ export class AdminsService {
     }
 
     try {
-      const savedAdmin = await this.adminRepository.save(admin);
-      delete savedAdmin.passwordHash;
-      return savedAdmin;
+      const newAdmin = await this.adminRepository.save(admin);
+      return this.deletePasswordHash(newAdmin);
     } catch (error) {
       if (error?.code === 'ER_DUP_ENTRY') {
         throw new ConflictException('Email already exists');

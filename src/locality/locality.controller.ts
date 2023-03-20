@@ -7,12 +7,14 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { LocalityCreateDto } from './dto/create.dto';
 import { LocalityUpdateDto } from './dto/update.dto';
 import { Locality } from './locality.entity';
 import { LocalityService } from './locality.service';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth-guard.service';
 
 @ApiTags('localities')
 @Controller('localities')
@@ -31,6 +33,7 @@ export class LocalityController {
   /**
    * Get locality
    */
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getList(): Promise<Locality[]> {
     return await this.localityService.getList();
