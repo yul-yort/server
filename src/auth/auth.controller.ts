@@ -22,7 +22,7 @@ export class AuthController {
     @Res({ passthrough: true }) response,
   ) {
     const token = await this.authService.login(email, password);
-    const date = new Date(Date.now() + jwtConstants.expiresTime * 1000);
+    const date = new Date(Date.now() + jwtConstants.accessExpiresTime * 1000);
 
     response.cookie(jwtConstants.tokenCookieKey, `${token.access_token}`, {
       expires: date,

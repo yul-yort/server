@@ -8,9 +8,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   //TODO прокинуть конфиги сюда
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request) => {
+          const token = request?.cookies[jwtConstants.tokenCookieKey];
+          if (!token) {
+            return null;
+          }
+
+          return token;
+        },
+      ]),
       ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret_jwt,
+      secretOrKey: jwtConstants.access_secret_jwt,
     });
   }
 

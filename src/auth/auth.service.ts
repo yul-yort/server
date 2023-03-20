@@ -42,7 +42,7 @@ export class AuthService {
     admin: Omit<Admin, 'passwordHash'>;
   }> {
     const admin = await this.validateAdmin(email, password);
-    const access_token = await this.tokenService.generateJwtToken(admin);
+    const access_token = await this.tokenService.generateAccessJwtToken(admin);
 
     return {
       access_token,

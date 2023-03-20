@@ -7,12 +7,12 @@ import { AdminTokenDto } from './dto/auth.dto';
 export class TokenService {
   constructor(private readonly jwtService: JwtService) {}
 
-  async generateJwtToken(admin) {
+  async generateAccessJwtToken(admin) {
     const payload: AdminTokenDto = { user: admin, origin: 'yy-admin' };
 
     return this.jwtService.sign(payload, {
-      secret: jwtConstants.secret_jwt,
-      expiresIn: jwtConstants.expiresTime,
+      secret: jwtConstants.access_secret_jwt,
+      expiresIn: jwtConstants.accessExpiresTime,
     });
   }
 }

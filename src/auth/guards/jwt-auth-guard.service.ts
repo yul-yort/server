@@ -6,6 +6,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import jwtDecode from 'jwt-decode';
 import { AdminTokenDto } from '../../token/dto/auth.dto';
+import { jwtConstants } from '../../constants';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -19,10 +20,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
        * Находим и десериализуем токен.
        */
       const request = ctx.switchToHttp().getRequest();
-      const authorizationIdx = request.rawHeaders.indexOf('Authorization');
-      const token = request.rawHeaders[authorizationIdx + 1].split(' ')[1];
+      const token = request?.cookies[jwtConstants.tokenCookieKey];
 
-      if (authorizationIdx < 0 || !token) {
+      if (!token) {
         throw new UnauthorizedException();
       }
 
