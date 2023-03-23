@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { isDev } from './constants';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
@@ -8,7 +9,7 @@ import { LocalityModule } from './locality/locality.module';
 import { OrderModule } from './order/order.module';
 import { AgencyModule } from './agencies/agency.module';
 import { AdminsModule } from './admins/admins.module';
-import { isDev } from './constants';
+import { TokenModule } from './token/token.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { isDev } from './constants';
     OrderModule,
     AgencyModule,
     AdminsModule,
+    TokenModule,
   ],
   providers: [AppService],
   controllers: [AppController],

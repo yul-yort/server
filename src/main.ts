@@ -21,7 +21,11 @@ async function bootstrap() {
 
   if (isDev) {
     app.enableCors({
-      origin: ['http://localhost:3000', 'http://localhost:3001'],
+      origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://127.0.0.1:9000',
+      ],
       credentials: true,
     });
 
@@ -31,6 +35,7 @@ async function bootstrap() {
       .setVersion('1.0')
       .addTag('yul-yort')
       .addBearerAuth()
+      .addSecurityRequirements('bearer')
       .build();
 
     const document = SwaggerModule.createDocument(app, options);
