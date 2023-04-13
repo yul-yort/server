@@ -3,8 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { isDev } from './constants';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { LocalityModule } from './locality/locality.module';
 import { OrderModule } from './order/order.module';
 import { AgencyModule } from './agencies/agency.module';
@@ -33,7 +31,7 @@ import { TokenModule } from './token/token.module';
     AdminsModule,
     TokenModule,
   ],
-  providers: [AppService],
-  controllers: [AppController],
+  providers: [],
+  controllers: [],
 })
 export class AppModule {}
