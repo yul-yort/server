@@ -9,7 +9,7 @@ npm install
 ```
 
 # Docker
-- сперва запускаем приложение Docker на компьютере
+- Запускаем приложение Docker клиент
 ## Running the docker
 ```bash
 docker-compose up
