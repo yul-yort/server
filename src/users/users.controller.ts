@@ -26,7 +26,7 @@ export class UsersController {
    * @param createUserDto параметры для создания пользователя
    */
   @Post()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async create(@Body() createUserDto: UserCreateDto): Promise<User> {
     return await this.usersService.create(createUserDto);
   }
@@ -35,8 +35,9 @@ export class UsersController {
    * Get users list
    */
   @Get()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async findAll(): Promise<User[]> {
+    console.log('findAll');
     return this.usersService.findAll();
   }
 
@@ -45,7 +46,7 @@ export class UsersController {
    * @param id user id
    */
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findOne(id);
   }
@@ -54,7 +55,7 @@ export class UsersController {
    * Delete user
    * @param id user id
    */
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.usersService.remove(id);
