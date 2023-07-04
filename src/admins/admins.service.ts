@@ -6,12 +6,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { AdminCreateDto } from './dto/create.dto';
 import { Admin } from './admin.entity';
 import { validate } from 'class-validator';
 import { ValidateException } from '../customExeptions';
 import { genSalt, hash } from 'bcryptjs';
+import { AdminUpdateDto } from './dto/update.dto';
 
 @Injectable()
 export class AdminsService {
@@ -19,6 +20,17 @@ export class AdminsService {
     @InjectRepository(Admin)
     private readonly adminRepository: Repository<Admin>,
   ) {}
+
+  private async hashPassword(password) {
+    const salt = await genSalt(10);
+
+    return await hash(password, salt);
+  }
+
+  private deletePasswordHash(admin) {
+    delete admin.passwordHash;
+    return admin;
+  }
 
   async create(createAdminDto: AdminCreateDto): Promise<Admin> {
     const oldAdmin = await this.findForValidate(createAdminDto.email);
@@ -29,8 +41,7 @@ export class AdminsService {
       );
     }
 
-    const salt = await genSalt(10);
-    const passwordHash = await hash(createAdminDto.password, salt);
+    const passwordHash = await this.hashPassword(createAdminDto.password);
 
     const admin = new Admin();
     admin.firstName = createAdminDto.firstName;
@@ -45,9 +56,8 @@ export class AdminsService {
     }
 
     try {
-      const savedAdmin = await this.adminRepository.save(admin);
-      delete savedAdmin.passwordHash;
-      return savedAdmin;
+      const newAdmin = await this.adminRepository.save(admin);
+      return this.deletePasswordHash(newAdmin);
     } catch (error) {
       if (error?.code === 'ER_DUP_ENTRY') {
         throw new ConflictException('Email already exists');
@@ -86,5 +96,22 @@ export class AdminsService {
     if (affected === 0) {
       throw new NotFoundException(`Admin with id ${id} not found`);
     }
+  }
+
+  async update({ id, password, ...dto }: AdminUpdateDto): Promise<Admin> {
+    if (password) {
+      dto['passwordHash'] = await this.hashPassword(password);
+    }
+
+    const { affected }: UpdateResult = await this.adminRepository.update(
+      { id },
+      dto,
+    );
+
+    if (affected === 0) {
+      throw new NotFoundException('Обновляемый администратор не найден');
+    }
+
+    return await this.findOne(id);
   }
 }

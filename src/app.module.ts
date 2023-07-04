@@ -1,16 +1,14 @@
 import 'dotenv/config';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { isDev } from './constants';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { LocalityModule } from './locality/locality.module';
 import { OrderModule } from './order/order.module';
 import { AgencyModule } from './agencies/agency.module';
 import { AdminsModule } from './admins/admins.module';
-import { isDev } from './constants';
-import * as process from 'process';
+import { TokenModule } from './token/token.module';
 
 @Module({
   imports: [
@@ -32,8 +30,9 @@ import * as process from 'process';
     OrderModule,
     AgencyModule,
     AdminsModule,
+    TokenModule,
   ],
-  providers: [AppService],
-  controllers: [AppController],
+  providers: [],
+  controllers: [],
 })
 export class AppModule {}
