@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { isDev } from './constants';
@@ -14,10 +15,10 @@ import { TokenModule } from './token/token.module';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'yul-yort-test',
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       autoLoadEntities: true,
       // Setting synchronize: true shouldn't be used in
       // production - otherwise you can lose production data.
