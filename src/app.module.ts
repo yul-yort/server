@@ -13,7 +13,7 @@ import { TokenModule } from './token/token.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: 'mysql_db',
       port: 3306,
       username: 'root',
       password: 'root',
