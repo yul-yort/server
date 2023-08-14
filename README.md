@@ -2,44 +2,22 @@
 
 yul-yort-back-end project documentation.
 
-## Installation
-
-```bash
-npm install
-```
-
-# Docker
+# Running the app
 - сперва запускаем приложение Docker на компьютере
-## Running the docker
+
+## development
 ```bash
 docker-compose up
 ```
 
 ## Stopping the docker
-
 ```bash
 docker-compose down
 ```
 
-# Running the app
-
-## development
-```bash
-npm run start
-```
-
-## watch mode (запускаем при разработке)
-```bash
-npm run start:dev
-```
 Приложение запустится на порту:9000
 
 Swagger будет доступен по адресу http://localhost:9000/swagger
-
-## production mode
-```bash
-npm run start:prod
-```
 
 # Test
 

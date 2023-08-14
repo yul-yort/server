@@ -28,7 +28,7 @@ export class AdminsController {
    * Create admin
    * @param createAdminDto параметры для создания пользователя
    */
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createAdminDto: AdminCreateDto): Promise<Admin> {
     return await this.adminsService.create(createAdminDto);
