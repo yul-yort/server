@@ -2,7 +2,7 @@ version: "3"
 
 services:
   server:
-    build: ./
+    image: server:latest
     container_name: yul-yort-server
     restart: always
     volumes:
