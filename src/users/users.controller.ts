@@ -26,7 +26,7 @@ export class UsersController {
    * @param createUserDto параметры для создания пользователя
    */
   @Post()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async create(@Body() createUserDto: UserCreateDto): Promise<User> {
     return await this.usersService.create(createUserDto);
   }
