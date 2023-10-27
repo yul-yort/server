@@ -8,13 +8,11 @@ import {
   Patch,
   Post,
   Req,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminCreateDto } from './dto/create.dto';
 import { Admin } from './admin.entity';
 import { AdminsService } from './admins.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth-guard.service';
 import { AdminUpdateDto } from './dto/update.dto';
 
 const endpoint = 'admins';
@@ -38,7 +36,6 @@ export class AdminsController {
    * Get admins list
    */
   @Get()
-  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<Admin[]> {
     return this.adminsService.findAll();
   }
@@ -46,7 +43,6 @@ export class AdminsController {
   /**
    * Get current admin profile
    */
-  @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Req() request): Promise<Admin> {
     const adminId = request.user.admin.id;
@@ -58,7 +54,6 @@ export class AdminsController {
    * Get admin
    * @param id admin id
    */
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Admin> {
     return this.adminsService.findOne(id);
@@ -68,7 +63,6 @@ export class AdminsController {
    * Delete admin
    * @param id admin id
    */
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.adminsService.remove(id);
@@ -78,7 +72,6 @@ export class AdminsController {
    * Update admin
    * @param dto - Admin update dto
    */
-  @UseGuards(JwtAuthGuard)
   @Patch()
   async update(@Body() dto: AdminUpdateDto): Promise<Admin> {
     return await this.adminsService.update(dto);

@@ -8,8 +8,7 @@ import { AdminsModule } from './admins/admins.module';
 import { TokenModule } from './token/token.module';
 import { ConfigModule } from './config.module';
 import { TypeOrmModule } from './db/typeorm.module';
-
-console.log('process.env', process.env);
+import './firebase';
 
 @Module({
   imports: [

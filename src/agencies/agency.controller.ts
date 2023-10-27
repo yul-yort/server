@@ -42,7 +42,6 @@ export class AgencyController {
   /**
    * Create agency
    */
-  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() body: AgencyCreateDto): Promise<Agency> {
     return this.agencyService.create(body);
@@ -51,7 +50,6 @@ export class AgencyController {
   /**
    * Update agency
    */
-  @UseGuards(JwtAuthGuard)
   @Patch()
   async updateAgency(@Body() body: AgencyUpdateDto): Promise<Agency> {
     return this.agencyService.update(body);
@@ -60,7 +58,6 @@ export class AgencyController {
   /**
    * Delete agencies
    */
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteAgency(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.agencyService.delete(id);
