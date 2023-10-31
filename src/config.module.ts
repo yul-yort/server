@@ -1,6 +1,6 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
-import { AuthMiddleware } from './auth';
+import { AuthMiddleware } from './auth/auth';
 
 @Module({
   imports: [NestConfigModule.forRoot()],

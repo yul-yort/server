@@ -7,13 +7,11 @@ import {
   ParseIntPipe,
   Param,
   Patch,
-  UseGuards,
 } from '@nestjs/common';
 import { Agency } from './agency.entity';
 import { AgencyService } from './agency.service';
 import { AgencyCreateDto, AgencyUpdateDto } from './dto';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth-guard.service';
 
 /**
  * Agency controller
