@@ -35,5 +35,5 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-.env
-/firebase.json
+# .env
+# /firebase.json
