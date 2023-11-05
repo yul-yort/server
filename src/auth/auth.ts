@@ -1,4 +1,8 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import * as admin from 'firebase-admin';
 
@@ -8,7 +12,7 @@ export class AuthMiddleware implements NestMiddleware {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       // Если отсутствует токен в заголовке, верните ошибку
-      return res.status(401).json({ message: 'Токен отсутствует' });
+      return new UnauthorizedException('Токен отсутствует');
     }
 
     const [, token] = authHeader.split(' ');
@@ -21,7 +25,7 @@ export class AuthMiddleware implements NestMiddleware {
       })
       .catch((error) => {
         console.log('error', error);
-        return res.status(401).json({ message: 'Недействительный токен' });
+        return new UnauthorizedException(error, 'Недействительный токен');
       });
   }
 }
