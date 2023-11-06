@@ -41,11 +41,13 @@ async function bootstrap() {
 
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('swagger', app, document);
-    console.log(`Swagger is running on: ${await app.getUrl()}/swagger`);
   }
 
   await app.listen(9000, '0.0.0.0');
 
+  if (isDev) {
+    console.log(`Swagger is running on: ${await app.getUrl()}/swagger`);
+  }
   console.log(`Application is running on: ${await app.getUrl()}`);
 }
 
