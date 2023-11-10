@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { LocalityCreateDto } from './dto/create.dto';
 import { LocalityUpdateDto } from './dto/update.dto';
@@ -32,8 +33,8 @@ export class LocalityController {
    * Get locality
    */
   @Get()
-  async getList(): Promise<Locality[]> {
-    return await this.localityService.getList();
+  async getList(@Query('search') search: string): Promise<Locality[]> {
+    return await this.localityService.getList(search);
   }
 
   /**
