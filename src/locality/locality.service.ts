@@ -41,9 +41,9 @@ export class LocalityService {
     return this.localityRepository.findOneBy({ id });
   }
 
-  async getList(search): Promise<Locality[]> {
+  async getList(search: string): Promise<Locality[]> {
     return this.localityRepository.find({
-      where: search ? { name: Like(`%${search}%`) } : {},
+      where: { name: Like(`%${search}%`) },
       take: 20, // добавляем лимит на 20 элементов
     });
   }
