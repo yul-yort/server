@@ -23,6 +23,7 @@ export class LocalityController {
   /**
    * Delete locality
    * @param id - id
+   * @param search - search string
    */
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
