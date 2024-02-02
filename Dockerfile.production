@@ -14,7 +14,11 @@ RUN npm install
 COPY . .
 
 # Creates a "dist" folder with the production build
-RUN npm run build
+RUN --mount=type=secret,id=DB_HOST \
+    --mount=type=secret,id=DB_PASSWORD \
+    export DB_HOST=$(cat /run/secrets/DB_HOST) && \
+    export DB_PASSWORD=$(cat /run/secrets/DB_PASSWORD) && \
+    npm run build
 
 # Set NODE_ENV environment variable
 ENV NODE_ENV production

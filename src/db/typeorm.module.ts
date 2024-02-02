@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule as NestTypeOrmModule } from '@nestjs/typeorm';
 import { isDev } from '../constants';
 
-//FIXME: заменить
-
 @Module({
   imports: [
     NestTypeOrmModule.forRoot({
