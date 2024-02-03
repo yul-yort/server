@@ -6,10 +6,10 @@ import { isDev } from '../constants';
   imports: [
     NestTypeOrmModule.forRoot({
       type: 'mysql',
-      host: '90.156.231.155',
+      host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT, 10),
       username: process.env.DB_USERNAME,
-      password: '%e8Ihx&TM<rD#-',
+      password: process.env.DB_PASSWORD,
       database: isDev ? 'default_db' : 'default_db', //Переключить
       autoLoadEntities: true,
       synchronize: true, //В production нужно использовать использовать миграцию
