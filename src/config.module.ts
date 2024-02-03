@@ -8,7 +8,11 @@ import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import { AuthMiddleware } from './auth/auth';
 
 @Module({
-  imports: [NestConfigModule.forRoot()],
+  imports: [
+    NestConfigModule.forRoot({
+      envFilePath: ['.env.local', '.env'],
+    }),
+  ],
 })
 export class ConfigModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
