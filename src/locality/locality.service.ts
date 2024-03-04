@@ -8,7 +8,7 @@ import { LocalityCreateDto } from './dto/create.dto';
 import { LocalityUpdateDto } from './dto/update.dto';
 import { Locality } from './locality.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository, UpdateResult } from 'typeorm';
+import { FindManyOptions, Like, Repository, UpdateResult } from 'typeorm';
 import { validate } from 'class-validator';
 import { ValidateException } from '../customExeptions';
 import { Locality_FORBIDDEN, Locality_NOT_FOUND } from './locality.constants';
@@ -42,10 +42,15 @@ export class LocalityService {
   }
 
   async getList(search: string): Promise<Locality[]> {
-    return this.localityRepository.find({
-      where: { name: Like(`%${search}%`) },
+    const queryOptions: FindManyOptions<Locality> = {
       take: 20, // добавляем лимит на 20 элементов
-    });
+    };
+
+    if (!!search) {
+      queryOptions.where = { name: Like(`%${search}%`) };
+    }
+
+    return this.localityRepository.find(queryOptions);
   }
 
   async delete(id: number): Promise<void> {
